@@ -121,11 +121,11 @@ class TGBot implements TGInterface
     private function setBotInfo(): void
     {
         $request = new HttpRequest('getMe', [], $this);
-        if (!$request->getResponse(){'ok'}) {
+        if (!(object) $request->getResponse()->ok) {
             throw new TGException('The token provided does not exist.');
         } else {
-            $this->username = $request->getResponse(){'result'}{'username'};
-            $this->ID = $request->getResponse(){'result'}{'id'};
+            $this->username = (object) $request->getResponse()->result->username;
+            $this->ID = (object) $request->getResponse()->result->id;
             $request->defineInstance($this);
         }
     }
