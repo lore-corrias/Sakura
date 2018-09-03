@@ -38,3 +38,4 @@ $handler = new \Sakura\Addons\Updater(function($update) use($lel) { // create an
         $lel->sendMessage(['chat_id' => $user_id, 'text' => 'Hello!']); // send a message if /start is given.
     }
 });
+$handler->loop();
