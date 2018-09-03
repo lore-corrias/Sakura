@@ -56,10 +56,10 @@ class Updater
     public function getUpdates(int $offset = -1, ?array $allowed = [], ?int $timeout = NULL, ?int $limit = NULL) {
         $request = new HttpRequest('getUpdates', ['offset' => $offset, 'allowed_updates' => $allowed, 'timeout' => $timeout, 'limit' => $limit], self::$telegram);
         if(!$request->getResponse()) {
-            throw new TGException('An error occurred while trying to get update: '.$request->getResponse(){'description'});
+            throw new TGException('An error occurred while trying to get update: '.(object) $request->getResponse()->description);
         }
 
-        return $request->getResponse(){'result'};
+        return (object) $request->getResponse()->result;
     }
 
 
