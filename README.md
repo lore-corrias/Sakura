@@ -14,7 +14,7 @@ You just have to save the HTTP API Token, you'll need it later.
 3. Once you are done, you can install all the required dependecies using
 
 
- `composer require composer.json`
+ `composer update`
 
 ## Create the bot.
 Once you are done with the installation, you have to create the bot file.
