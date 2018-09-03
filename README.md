@@ -27,10 +27,10 @@ require_once __DIR__.'/vendor/autoload.php'; // require autoload composer
 error_reporting(0);
 
 
-$bot = new \Sakura\TGBot("664855233:AAGUo8FGkI8c6fsjqxTD_lgBYwoXuxUjDgU", [143336289], ['save_instance' => true]);
+$bot = new \Sakura\TGBot("664855233:AAGUo8FGkI8c6fsjqxTD_lgBYwoXuxUjDgU", [143336289], ['as_array' => true]);
 // The first parameter is the token given by botfather, the second is the array list and the third the settings to be modified.
 
-$handler = new \Sakura\Addons\Updater(function($update) use($lel) { // create an update handler function
+$handler = new \Sakura\Addons\Updater(function(array $update) use($lel) { // create an update handler function
     isset($update['message']['text']) ? $message = $update['message']['text'] : $message = '';
     isset($update['message']['from']['id']) ? $user_id = $update['message']['from']['id'] : $user_id = '';
     
