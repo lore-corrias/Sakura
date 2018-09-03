@@ -2,12 +2,20 @@
 A simple and easy to use script to create Telegram bots.
 ## Installation
 1. First thing first, you need to create a Telegram Bot. In order to do it, start the telegram bot [@BotFather](t.me/BotFather) and type `/newbot`.
+
 ![BotFather Message](https://i.imgur.com/mW6vCn2.png)
+
 You just have to save the HTTP API Token, you'll need it later.
 2. Next, move on your VPS and clone this repository using
+
  `git clone https://github.com/justlel/Sakura.git && cd Sakura/`
+
+
 3. Once you are done, you can install all the required dependecies using
+
+
  `composer install composer.json`
+
 ## Create the bot.
 Once you are done with the installation, you have to create the bot file.
 You can create it as you rather, but here there is a simple example
