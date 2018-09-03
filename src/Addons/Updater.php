@@ -43,7 +43,7 @@ class Updater
         }
         try {
             $parameter_type = $function_info->getParameters()[0]->getType()->getName();
-        } catch(\ReflectionException $e) {
+        } catch(\Exception $e) {
             throw new TGException('The parameter type must be defined.');
         }
         if($parameter_type != 'object' && $parameter_type != 'array') {
