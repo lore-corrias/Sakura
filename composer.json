@@ -3,7 +3,7 @@
     "license": "AGPL-3.0-only",
     "description": "An easy-to-use framework to create Telegram bots.",
     "type": "project",
-    "version": "1.0",
+    "version": "1.1",
     "minimum-stability": "alpha",
     "require": {
         "php": "^7.1",
