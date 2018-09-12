@@ -10,11 +10,11 @@ use Sakura\Interfaces\InterfaceAPIRequest;
 /**
  * Class HttpRequest, part of the "Sakura" package.
  *
- * This class is designed to send request to the **official
- * Telegram api**, but can also be used to send an HttpRequest
- * of any type, simply by changing the **destination URL** and the **request method**.
+ * This class is designed to send request to the official
+ * Telegram api, but can also be used to send an HttpRequest
+ * of any type, simply by changing the destination URL and the request method.
  *
- * @see InterfaceAPIRequest _This class is also an implementation of the interface InterfaceAPIRequest._
+ * @see InterfaceAPIRequest This class is also an implementation of the interface InterfaceAPIRequest.
  *
  * @package Sakura
  * @implements InterfaceAPIRequest
@@ -29,6 +29,12 @@ class HttpRequest implements InterfaceAPIRequest
      * @var object|array
      */
     private $response;
+    /**
+     * cURL handle. Used to speed up requests.
+     *
+     * @var resource
+     */
+    private $curl;
     /**
      * One of the Telegram methods used to have the bot perform actions.
      * If the HttpRequest is not executed to https://api.telegram.org/,
@@ -106,10 +112,12 @@ class HttpRequest implements InterfaceAPIRequest
      * used by the class.
      *
      * @param TGBot $tg
+     * @return HttpRequest
      */
-    public function defineInstance(TGBot $tg): void
+    public function defineInstance(TGBot $tg): self
     {
         self::$telegram = $tg;
+        return $this;
     }
 
     /**
@@ -120,13 +128,15 @@ class HttpRequest implements InterfaceAPIRequest
      */
     private function execute(): void
     {
-        $ch = curl_init();
+        if (!is_resource($this->curl)) {
+            $this->curl = curl_init();
+        }
         if ($this->url !== TGBot::API_URL) {
             $url = $this->url . $this->method;
         } else {
             $url = $this->url . self::$telegram->token . '/' . $this->method;
         }
-        curl_setopt_array($ch, [
+        curl_setopt_array($this->curl, [
                 CURLOPT_URL => $url,
                 CURLOPT_POST => 1,
                 CURLOPT_POSTFIELDS => http_build_query($this->parameters),
@@ -136,19 +146,19 @@ class HttpRequest implements InterfaceAPIRequest
                 CURLOPT_FOLLOWLOCATION => 0,
             ]
         );
-        $raw = curl_exec($ch);
-        if ($err = curl_errno($ch)) {
+        $raw = curl_exec($this->curl);
+        if ($err = curl_errno($this->curl)) {
             // request failed, updating the response.
-            $this->response = ['ok' => false, 'error_code' => $err, 'description' => curl_error($ch)];
-            Logger::log(sprintf("The HttpRequest to the url %s failed with error code %d (%s)", $url, $err, curl_error($ch)), Logger::WARN);
+            $this->response = ['ok' => false, 'error_code' => $err, 'description' => curl_error($this->curl)];
+            Logger::log(sprintf("The HttpRequest to the url %s failed with error code %d (%s)", $url, $err, curl_error($this->curl)), Logger::WARN);
             return;
         }
-        if (self::$telegram->settings->getSettings()['as_array']) {
+        if (self::$telegram->settings->getSettings()['as_array'] || $this->method === 'getUpdates') {
             $this->response = json_decode($raw, true);
         } else {
             $this->response = json_decode($raw);
         }
-        curl_close($ch);
+        curl_close($this->curl);
     }
 
     /**
@@ -161,16 +171,4 @@ class HttpRequest implements InterfaceAPIRequest
     {
         return $this->response;
     }
-
-    /**
-     * Deprecated function, there's no need
-     * to obtain the current instance used by
-     * this class after the "UpdateHandler" class
-     * update.
-     *
-     * @deprecated
-     */
-    //public static function getCurrentInstance() {
-    //	return self::$telegram;
-    //}
 }

@@ -44,9 +44,9 @@ class ExceptionHandler implements ExceptionHandlerInterface
      */
     public function handler(\Throwable $exception)
     {
-        error_log($exception->getMessage(), 3, $this->log_directory . '/' . date('d-m-Y h:i:s'));
-        $message = "[%s] Exception caught: %d\n Message: %s\n File: %s\n Line: %d\n";
-        Logger::log(sprintf($message, date('d-m-Y h:i:s'), $exception->getCode(), $exception->getMessage(), $exception->getTrace()['0']['file'], $exception->getTrace()['0']['line']), Logger::FATAL);
+        $message = sprintf("[%s] Exception caught: %d\n Message: %s\n File: %s\n Line: %d\n", date('d-m-Y h:i:s'), $exception->getCode(), $exception->getMessage(), isset($exception->getTrace()['0']['file']) ? $exception->getTrace()['0']['file'] : 'Undefined', isset($exception->getTrace()['0']['file']) ? $exception->getTrace()['0']['line'] : 'Undefined');
+        error_log($message, 3, $this->log_directory . '/' . date('d-m-Y h:i:s'));
+        Logger::log($message, Logger::FATAL);
     }
 
     /**
@@ -54,7 +54,7 @@ class ExceptionHandler implements ExceptionHandlerInterface
      *
      * This constructor is automatically called in the TGBot class.
      *
-     * @param callable|null $handler A valid callable for the {@link http://php.net/manual/en/function.set-exception-handler.php "set_exception_handler"} function. Optional.
+     * @param callable|null $handler A valid callable for the set_exception_handler function. Optional.
      * @param string|null $log_directory Path to the log directory. Required if no $handler is provided.
      * @throws TGException
      * @throws \ReflectionException
@@ -92,10 +92,11 @@ class ExceptionHandler implements ExceptionHandlerInterface
             throw new TGException(sprintf('The exception handler must accept only one parameter, %d given', $parameters_count));
         }
         $parameter_type = $parameters[0]->getClass();
+
         try {
             $parameter_class_name = $parameter_type->getName();
-        } catch (\ReflectionException $e) {
-            throw new TGException('The parameter of the function must be part of the Throwable interface.');
+        } catch (\Throwable $e) {
+            throw new TGException('The parameter type must be defined.');
         }
         if ($parameter_class_name !== 'Throwable') { // parameter must be part of the Throwable interface
             throw new TGException(sprintf("The callable must have one parameter, which has to be part of the \"Throwable\" interface. %s given.", $parameter_class_name));
@@ -107,7 +108,7 @@ class ExceptionHandler implements ExceptionHandlerInterface
      * Public method, use it to get the current handler defined by the user
      * (if any).
      *
-     * @return callable
+     * @return callable|null
      */
     public function getUserHandler(): ?callable
     {

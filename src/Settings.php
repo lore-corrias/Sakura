@@ -1,5 +1,5 @@
-<?php declare(strict_types=1);
-/** @noinspection PhpInconsistentReturnPointsInspection */
+<?php /** @noinspection ALL */
+declare(strict_types=1);
 
 namespace Sakura;
 
@@ -34,7 +34,7 @@ class Settings implements SettingsInterface
         'as_array' => false,
         'save_instance' => true,
         'logger' => 0,
-        'safe_mode' => true,
+        'safe_mode' => false,
         'config_dir' => 'configs',
         'autoload_backup' => true,
     ];
@@ -43,7 +43,7 @@ class Settings implements SettingsInterface
      *
      * @var string
      */
-    const CONF_EXT = '.Sakura';
+    const CONF_EXT = '.sakura';
     /**
      * Array where all the settings defined by the user are stored.
      * You can access this variable using the getSettings method.
@@ -87,7 +87,7 @@ class Settings implements SettingsInterface
     {
         if (substr($path, -7, 7) !== self::CONF_EXT) {
             Logger::log(sprintf('The config file must be a %s', self::CONF_EXT), Logger::WARN);
-            $retry = readline('Insert a new path (no entry = abort):');
+            $retry = readline('Insert a new path (no entry = abort): ');
             if (empty($retry)) {
                 return FALSE;
             }

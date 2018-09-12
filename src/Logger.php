@@ -20,7 +20,8 @@ use Sakura\Interfaces\LoggerInterface;
  * @package Sakura
  * @implements LoggerInterface
  */
-class Logger implements LoggerInterface {
+class Logger implements LoggerInterface
+{
     /**
      * Boolean variable, which can be either true
      * or false to enable or disable the safe mode.
@@ -47,41 +48,41 @@ class Logger implements LoggerInterface {
     /*
      * Log levels.
      */
-	const NOTICE = 1;
-	const WARN = 2;
-	const FATAL = 3;
+    const NOTICE = 1;
+    const WARN = 2;
+    const FATAL = 3;
     /**
      * A bi-dimensional array containing the
      * codes of each CLI color.
-     * @link https://gist.github.com/sallar/5257396 Example of CLI colors.
+     * At https://gist.github.com/sallar/5257396 there's a great example of CLI colors.
      *
      * @constant (array)[]
      */
-	const COLORS = [
-			'background' => [
-				'black' => '40',
-				'red' => '41',
-				'green' => '42',
-				'yellow' => '43',
-				'blue' => '44',
-				'magenta' => '45',
-				'cyan' => '46',
-				'light_gray' => '47',
-			],
-			'string' => [
-				'red' => '0;31',
-				'blue' => '0;34',
-				'yellow' => '1;33',
-				'purple' => '0;35',
-				'white' => '1;37',
-				'green' => '0;32',
-				'cyan' => '0;36',
-				'black' => '0;30',
-				'brown' => '0;33',
-				'light_gray' => '0;37',
-			],
-		
-		];
+    const COLORS = [
+        'background' => [
+            'black' => '40',
+            'red' => '41',
+            'green' => '42',
+            'yellow' => '43',
+            'blue' => '44',
+            'magenta' => '45',
+            'cyan' => '46',
+            'light_gray' => '47',
+        ],
+        'string' => [
+            'red' => '0;31',
+            'blue' => '0;34',
+            'yellow' => '1;33',
+            'purple' => '0;35',
+            'white' => '1;37',
+            'green' => '0;32',
+            'cyan' => '0;36',
+            'black' => '0;30',
+            'brown' => '0;33',
+            'light_gray' => '0;37',
+        ],
+
+    ];
 
     /**
      * Logger constructor.
@@ -89,7 +90,7 @@ class Logger implements LoggerInterface {
      * @param int $logger Logger level. Optional.
      * @param bool $safe_mode Boolean value for the safe mode. Optional.
      */
-	public function __construct($logger = 0, $safe_mode = true)
+    public function __construct($logger = 0, $safe_mode = true)
     {
         self::$logger_level = $logger;
         self::$mode = $safe_mode;
@@ -107,70 +108,71 @@ class Logger implements LoggerInterface {
      * @return null|string
      * @throws TGException
      */
-    public static function log(string $message, int $type = self::NOTICE, string $background = '', string $string_color = ''): ?string {
-		switch(self::$logger_level) { // checking logger level
-			case -1:
-				return NULL;
-			case 0:
-				break;
-			case 1:
-				if($type === self::FATAL || $type === self::WARN) {
+    public static function log(string $message, int $type = self::NOTICE, string $background = '', string $string_color = ''): ?string
+    {
+        switch (self::$logger_level) { // checking logger level
+            case -1:
+                return NULL;
+            case 0:
+                break;
+            case 1:
+                if ($type === self::FATAL || $type === self::WARN) {
                     return NULL;
-				}
-				break;
-			case 2:
-				if($type === self::NOTICE || $type === self::FATAL) {
+                }
+                break;
+            case 2:
+                if ($type === self::NOTICE || $type === self::FATAL) {
                     return NULL;
-				}
-				break;
-			case 3:
-				if($type === self::NOTICE || $type === self::WARN) {
+                }
+                break;
+            case 3:
+                if ($type === self::NOTICE || $type === self::WARN) {
                     return NULL;
-				}
-				break;
-			default:
-				throw new TGException('Unrecognized type of string given.');
-		}
+                }
+                break;
+            default:
+                throw new TGException('Unrecognized type of string given.');
+        }
 
-		// setting default colors for self::WARN and self::FATAL
-		if(!empty($background) && !in_array($background, array_keys(self::COLORS['background']))) {
-			throw new TGException('Unrecognized background color.');
-		}
-		if(!empty($string_color) && !in_array($string_color, array_keys(self::COLORS['string']))) {
-			throw new TGException('Unrecognized string color.');
-		}
+        // setting default colors for self::WARN and self::FATAL
+        if (!empty($background) && !in_array($background, array_keys(self::COLORS['background']))) {
+            throw new TGException('Unrecognized background color.');
+        }
+        if (!empty($string_color) && !in_array($string_color, array_keys(self::COLORS['string']))) {
+            throw new TGException('Unrecognized string color.');
+        }
 
-		// building the string
-		$msg = '';
-		if(empty($string_color)) {
+        // building the string
+        $msg = '';
+        if (empty($string_color)) {
             $msg .= "\033[" . self::COLORS['string']['white'];
-		} else {
-			$msg .= "\033[" . self::COLORS['string'][$string_color];
-		}
-		$msg .= 'm';
-		if(empty($background)) {
-			switch($type) {
-				case self::NOTICE:
-					$msg .= "\033[" . self::COLORS['background']['green'];
-					break;
-				case self::WARN:
-					$msg .= "\033[" . self::COLORS['background']['yellow'];
-					break;
-				case self::FATAL:
-					$msg .= "\033[" . self::COLORS['background']['red'];
-					break;
-			}
-		} else {
-			$msg .= "\033[" . self::COLORS['background'][$background];
-		}
-		$msg .= "m" . $message . "\033[0m" . PHP_EOL; // adding final stuff
-		
-		print($msg);
+        } else {
+            $msg .= "\033[" . self::COLORS['string'][$string_color];
+        }
+        $msg .= 'm';
+        if (empty($background)) {
+            switch ($type) {
+                case self::NOTICE:
+                    $msg .= "\033[" . self::COLORS['background']['green'];
+                    break;
+                case self::WARN:
+                    $msg .= "\033[" . self::COLORS['background']['yellow'];
+                    break;
+                case self::FATAL:
+                    $msg .= "\033[" . self::COLORS['background']['red'];
+                    break;
+            }
+        } else {
+            $msg .= "\033[" . self::COLORS['background'][$background];
+        }
+        $msg .= "m" . $message . "\033[0m" . PHP_EOL; // adding final stuff
 
-		if(($type === self::WARN || $type === self::FATAL) && self::$mode) { // die if safe_mode is enabled
-			die;
-		}
-		
-		return $msg; // returning colored string
-	}
+        print($msg);
+
+        if (($type === self::WARN || $type === self::FATAL) && self::$mode) { // die if safe_mode is enabled
+            die;
+        }
+
+        return $msg; // returning colored string
+    }
 }
