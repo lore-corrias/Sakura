@@ -60,7 +60,7 @@ $handler = new \Sakura\Addons\Updater(function(array $update) use($lel) { // cre
     isset($update['message']['from']['id']) ? $user_id = $update['message']['from']['id'] : $user_id = '';
     
     if($message=='/start') {
-        $lel->sendMessage(['chat_id' => $user_id, 'text' => 'Hello!']); // send a message if /start is given.
+        $bot->sendMessage(['chat_id' => $user_id, 'text' => 'Hello!']); // send a message if /start is given.
     }
 });
 $handler->loop();
